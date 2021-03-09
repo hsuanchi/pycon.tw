@@ -129,3 +129,12 @@ RAVEN_CONFIG = {
 GTM_TRACK_ID = env('GTM_TRACK_ID', default=None)
 
 DJANGO_Q_DEBUG = False
+
+
+from google.oauth2 import service_account
+
+# storage
+GS_CREDENTIALS = service_account.Credentials.from_service_account_file(
+    os.path.join(BASE_DIR, "google-cloud-storage.json")
+)
+GS_BUCKET_NAME = "pycontw-static"

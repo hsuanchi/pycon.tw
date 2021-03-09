@@ -5,13 +5,16 @@ from django.utils.text import slugify
 
 from core.models import ConferenceRelated, BigForeignKey
 
+# Create your models here.
+from storages.backends.gcloud import GoogleCloudStorage
+from django.core.files.storage import default_storage
+from django.conf import settings
 
 def logo_upload_to(instance, filename):
     return 'sponsors/{name}/{filename}'.format(
         name=slugify(instance.name, allow_unicode=True),
         filename=filename,
     )
-
 
 class Sponsor(ConferenceRelated):
 
@@ -29,6 +32,7 @@ class Sponsor(ConferenceRelated):
     logo_svg = models.FileField(
         verbose_name=_('logo (SVG)'),
         blank=True, upload_to=logo_upload_to,
+        storage= default_storage if settings.DEBUG else GoogleCloudStorage(),
         help_text=_(
             "Vector format of the logo, in SVG. This takes precedence to the "
             "raster format, if available."
@@ -38,6 +42,7 @@ class Sponsor(ConferenceRelated):
         verbose_name=_('logo (image)'),
         db_column='logo',   # Backward compatibility.
         blank=True, upload_to=logo_upload_to,
+        storage= default_storage if settings.DEBUG else GoogleCloudStorage(),
         help_text=_(
             "Raster format of the logo, e.g. PNG, JPEG. This is used as "
             "fallback when the SVG file is not available."
